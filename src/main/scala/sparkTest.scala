@@ -1,13 +1,14 @@
 /* sparkTest.scala */
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.SparkContext
+import org.apache.spark.SparkConf
 object sparkTest {
-  def main(args: Array[String]) {
-    val logFile = "/Desktop/SR_To_Do-list.txt" // Should be some file on your system
-    val spark = SparkSession.builder.appName("Simple Application").getOrCreate()
-    val logData = spark.read.textFile(logFile).cache()
-    val numAs = logData.filter(line => line.contains("a")).count()
-    val numBs = logData.filter(line => line.contains("b")).count()
-    println(s"Lines with a: $numAs, Lines with b: $numBs")
-    spark.stop()
+  def main(args:Array[String]): Unit ={
+    val conf = new SparkConf().setMaster("local").setAppName("sparkTest")
+    val sc = new SparkContext(conf)
+    sc.setLogLevel("WARN")
+
+    val rdd1 =  sc.textFile("/home/xs167-saurit/Desktop/Aspafka_db/SR_To_Do-list")
+    rdd1.foreach(println)
   }
 }
