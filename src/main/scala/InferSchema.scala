@@ -2,6 +2,7 @@
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.types.{StructField, StructType}
 import org.apache.spark.Partitioner
+import org.apache.spark.sql.functions.broadcast
 
 //case class CP extends Partitioner {
 //  var arg = 0
@@ -81,11 +82,33 @@ object InferSchema {
     // *** Broadcast Join ***
     val peopleDF = Seq(
       ("saurabh", "Patna"),
-      ("Stacksr", "Canada"),
+      ("Stacksr", "Vancoover"),
       ("Riya", "Kolkata"),
-      ("Yash", "Chandigarh")
+      ("Yash", "Berlin")
     ).toDF("Name", "City")
 
     peopleDF.show()
+
+    val citiesDF = Seq(
+      ("Patna", "India", 4),
+      ("Kolkata", "India", 5),
+      ("Vancoover", "Canada", 2),
+      ("Berlin", "Geramany", 3)
+    ).toDF("City", "Country", "Population( Cr. )")
+
+    citiesDF.show()
+
+    peopleDF.join(
+      broadcast(citiesDF),
+      peopleDF("city") <=> citiesDF("city")
+    ).drop(citiesDF("city"))
+      .show()
+
+    peopleDF.join(
+      broadcast(citiesDF),
+      peopleDF("city") <=> citiesDF("city")
+    ).drop(citiesDF("city"))
+      .explain()
+
   }
 }
