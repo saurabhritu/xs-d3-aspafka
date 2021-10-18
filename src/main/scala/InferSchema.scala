@@ -8,8 +8,7 @@ import org.apache.spark.Partitioner
 //  CP(){
 //    return a;
 //  }
-
-}
+//}
 
 object InferSchema {
 
@@ -72,12 +71,21 @@ object InferSchema {
 //
 //    rdd_3.saveAsTextFile("/tmp/coalesce")
 
-    // *** Repartition by key ***
-    val rdd_4 = spark.sparkContext.parallelize(Range(0,20)).map( ((x: Int) => (x%3, x)))
-    println(rdd_4.partitions.size)
-    rdd_4.foreach(println)
+    // *** Repartition by key *** ### Under development
+//    val rdd_4 = spark.sparkContext.parallelize(Range(0,20)).map( ((x: Int) => (x%3, x)))
+//    println(rdd_4.partitions.size)
+//    rdd_4.foreach(println)
 
 //    val rdd_5 = rdd_4.partitionBy()
 
+    // *** Broadcast Join ***
+    val peopleDF = Seq(
+      ("saurabh", "Patna"),
+      ("Stacksr", "Canada"),
+      ("Riya", "Kolkata"),
+      ("Yash", "Chandigarh")
+    ).toDF("Name", "City")
+
+    peopleDF.show()
   }
 }
