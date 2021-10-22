@@ -11,7 +11,9 @@ object Spark_DSF {
       .appName("Spark_DSF")
       .config("spark.master", "local")
       .getOrCreate()
+
     import spark.implicits._
+
     // json file structure must structured so that it can be converted into dataframes
     val df = spark.read.json("/home/saurabh/Desktop/Spafka_RW/Spark_DSF_RW/DSF_1.json")
     df.show()
