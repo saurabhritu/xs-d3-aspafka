@@ -35,7 +35,7 @@ def main(args: Array[String]) {
 //  val df = spark.read.format("avro")
 //    .option("userdataSchema", userdataSchema.toString)
 //    .load("/home/saurabh/Desktop/Spafka_RW/avro/userdata1.avro")
-//
+
 //  df.createOrReplaceTempView("userdataDF")
 //  val sqldf = spark.sql("SELECT first_name FROM userdataDF WHERE first_name LIKE 'K%' ")
 //
@@ -49,20 +49,32 @@ def main(args: Array[String]) {
     .option("subscribe", "test_1")
     .option("startingOffsets", "earliest")
     .load()
+//
+//  kdf.printSchema()
 
-  kdf.printSchema()
+//  *** Here we can perform analytical operation to filter out which data is to sent on kafka topics ***
+
+//  *** sending avro file df/ds data to kafka topics ***
+//  df.selectExpr("to_json(struct(id,first_name,last_name,title,email,gender,birthdate,salary,country)) AS value")
+//    .write
+//    .format("kafka")
+//    .option("kafka.bootstrap.servers", "localhost:9092")
+//    .option("topic", "test_1")
+//    .save()
+
 
   // *** Read json from kafka stream without schema (Value only) ***
-  val dfk = kdf.selectExpr("CAST(value AS STRING)")
+//  val dfk = kdf.selectExpr("CAST(value AS STRING)")
 
-  dfk.writeStream
-    .outputMode("append")
-    .format("console")
-    .option("truncate", "false")
-    .start().awaitTermination()
+//  dfk.writeStream
+//    .outputMode("append")
+//    .format("console")
+//    .option("truncate", "false")
+//    .option("2000", "true")
+//    .start().awaitTermination()
 
 
-// *** Read json from kafka stream with schema ***
+// *** Read json from kafka stream with schema imposed ***
 
 //  val dfk = kdf.selectExpr("CAST(value AS STRING)")
 //
@@ -76,10 +88,21 @@ def main(args: Array[String]) {
 //  personDfk.writeStream
 //    .format("console")
 //    .outputMode("append")
+//    .option("truncate", "false")
 //    .start()
 //    .awaitTermination()
 
 //  personDfk.show()
+
+  //  *** this will work if df is streaming Dataframe/ Dataset  [still under learning phase]***
+//    dfk.selectExpr("to_json(struct(*)) AS value")
+//      .writeStream
+//      .format("kafka")
+//      .outputMode("append")
+//      .option("kafka.bootstrap.servers", "localhost:9092")
+//      .option("topic", "test_1")
+//      .start()
+//      .awaitTermination()
 
 }
 }
