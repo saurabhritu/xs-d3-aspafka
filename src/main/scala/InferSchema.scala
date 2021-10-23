@@ -14,10 +14,13 @@ import org.apache.spark.sql.functions.broadcast
 object InferSchema {
 
   def main(args: Array[String]){
+
     val spark = SparkSession.builder()
       .appName("InferSchema")
       .config("spark.master", "local[5]")
       .getOrCreate()
+
+    spark.sparkContext.setLogLevel("ERROR")
 
     // Always import this to use implicit functionality
     import spark.implicits._

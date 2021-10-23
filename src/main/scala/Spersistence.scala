@@ -3,10 +3,13 @@ import org.apache.spark.storage.StorageLevel
 
 object Spersistence {
   def main(args: Array[String]){
+
      val spark = SparkSession.builder()
        .appName("Spersistence")
        .config("spark.master", "local")
        .getOrCreate()
+
+    spark.sparkContext.setLogLevel("ERROR")
 
     import spark.implicits._
 //    *** Ways to create rdd from Parallelized Connection, External Data, From RDD ***

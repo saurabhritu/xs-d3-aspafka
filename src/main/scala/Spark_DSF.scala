@@ -6,11 +6,14 @@ case class Person(id: String, name: String, team: String )
 object Spark_DSF {
 
   def main(args:Array[String]){
+
     val spark = SparkSession
       .builder()
       .appName("Spark_DSF")
       .config("spark.master", "local")
       .getOrCreate()
+
+    spark.sparkContext.setLogLevel("ERROR")
 
     import spark.implicits._
 

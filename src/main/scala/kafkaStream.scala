@@ -7,22 +7,16 @@ import org.apache.avro.SchemaBuilder
 import org.apache.avro.generic.GenericData.StringType
 import org.apache.spark.sql.types.StructType
 
-import org.apache.spark.SparkContext
-import org.apache.spark.SparkContext._
-import org.apache.spark.SparkConf
-import org.apache.spark.sql.SparkSession
 
 object kafkaStream {
 def main(args: Array[String]) {
-
-  val conf = new SparkConf().setMaster("local").setAppName("RDD_Demo")
-  val sc = new SparkContext(conf)
-  sc.setLogLevel("ERROR")
 
   val spark = SparkSession.builder()
     .appName("kafkaStream")
     .config("spark.master", "local")
     .getOrCreate()
+
+  spark.sparkContext.setLogLevel("ERROR")
 
   import spark.implicits._
 
@@ -93,16 +87,18 @@ def main(args: Array[String]) {
 //    .awaitTermination()
 
 //  personDfk.show()
+//  *** this will work if df is streaming Dataframe/ Dataset  [still under learning phase]***
 
-  //  *** this will work if df is streaming Dataframe/ Dataset  [still under learning phase]***
-//    dfk.selectExpr("to_json(struct(*)) AS value")
-//      .writeStream
-//      .format("kafka")
-//      .outputMode("append")
-//      .option("kafka.bootstrap.servers", "localhost:9092")
-//      .option("topic", "test_1")
-//      .start()
-//      .awaitTermination()
+    val dfk = kdf.selectExpr("CAST(value AS STRING)")
+    dfk.selectExpr("to_json(struct(*)) AS value")
+      .writeStream
+      .format("kafka")
+      .outputMode("append")
+      .option("kafka.bootstrap.servers", "localhost:9092")
+      .option("topic", "test_2")
+      .option("checkpointLocation", "checkpoint/")
+      .start()
+      .awaitTermination()
 
 }
 }
