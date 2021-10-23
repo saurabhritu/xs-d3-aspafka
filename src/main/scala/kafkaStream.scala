@@ -87,7 +87,7 @@ def main(args: Array[String]) {
 //    .awaitTermination()
 
 //  personDfk.show()
-//  *** this will work if df is streaming Dataframe/ Dataset  [still under learning phase]***
+//  *** this will work if df is streaming Dataframe/ Dataset  [ Done ]***
 
     val dfk = kdf.selectExpr("CAST(value AS STRING)")
     dfk.selectExpr("to_json(struct(*)) AS value")
@@ -96,7 +96,7 @@ def main(args: Array[String]) {
       .outputMode("append")
       .option("kafka.bootstrap.servers", "localhost:9092")
       .option("topic", "test_2")
-      .option("checkpointLocation", "checkpoint/")
+      .option("checkpointLocation", "tmp/checkpoint/kafkaStream/dfk/")
       .start()
       .awaitTermination()
 

@@ -32,12 +32,25 @@ object sparkStream {
 //    val words = lines.select(explode(split(lines("value"), " ")).alias("word"))
 //    val wordCounts = words.groupBy("word").count()
 
+//    *** Writing streaming data to console ***
+//    val query = wordCounts.writeStream
+//      .format("console")
+//      .outputMode("complete")
+//      .start()
+//      .awaitTermination()
 
-    val query = wordCounts.writeStream
-      .format("console")
-      .outputMode("complete")
-      .start()
-      .awaitTermination()
+//    *** Writing streaming data to kafka stream ***
+    val DFcounts = wordCounts.selectExpr("CAST(value AS STRING)", "CAST(count AS STRING)")
+
+        DFcounts.selectExpr("to_json(struct(*)) AS value")
+          .writeStream
+          .format("kafka")
+          .outputMode("complete")
+          .option("kafka.bootstrap.servers", "localhost:9092")
+          .option("topic", "counts")
+          .option("checkpointLocation", "tmp/checkpoint/sparkStream/DFcounts/")
+          .start()
+          .awaitTermination()
 
   }
 }
