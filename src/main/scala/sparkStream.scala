@@ -1,5 +1,6 @@
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.types.StructType
 
 // *** use netcat's "nc -lk 9090" command in terminal to send data through socket ***
 
@@ -32,25 +33,49 @@ object sparkStream {
 //    val words = lines.select(explode(split(lines("value"), " ")).alias("word"))
 //    val wordCounts = words.groupBy("word").count()
 
+//    *** using watermark for writing into file format ***
+//    val wordCounts = words
+//      .withWatermark("timestamp", "10 minutes")
+//      .groupBy(window($"timestamp", "10 minutes", "5 minutes"), $"words")
+//      .count()
+
 //    *** Writing streaming data to console ***
-//    val query = wordCounts.writeStream
-//      .format("console")
-//      .outputMode("complete")
-//      .start()
-//      .awaitTermination()
+    val query = wordCounts.writeStream
+      .format("console")
+      .outputMode("complete")
+      .start()
+      .awaitTermination()
 
 //    *** Writing streaming data to kafka stream ***
-    val DFcounts = wordCounts.selectExpr("CAST(value AS STRING)", "CAST(count AS STRING)")
+//    val DFcounts = wordCounts.selectExpr("CAST(value AS STRING)", "CAST(count AS STRING)")
+//
+//        DFcounts.selectExpr("to_json(struct(*)) AS value")
+//          .writeStream
+//          .format("kafka")
+//          .outputMode("complete")
+//          .option("kafka.bootstrap.servers", "localhost:9092")
+//          .option("topic", "counts")
+//          .option("checkpointLocation", "tmp/checkpoint/sparkStream/DFcounts/")
+//          .start()
+//          .awaitTermination()
 
-        DFcounts.selectExpr("to_json(struct(*)) AS value")
-          .writeStream
-          .format("kafka")
-          .outputMode("complete")
-          .option("kafka.bootstrap.servers", "localhost:9092")
-          .option("topic", "counts")
-          .option("checkpointLocation", "tmp/checkpoint/sparkStream/DFcounts/")
-          .start()
-          .awaitTermination()
+
+//    *** Writing streaming data into file system using watermarking & windowing [ going on..! ]***
+//    lines.isStreaming
+//
+//    val DFcounts = wordCounts.selectExpr("CAST(value AS STRING)", "CAST(count AS STRING)")
+//    val DFcounts_schema = new StructType()
+//      .add("word", "string")
+//      .add("count", "integer")
+//
+//    val count = DFcounts.selectExpr("to_csv(struct(*)) AS value")
+//      .writeStream
+//      .outputMode("append")
+//      .format("csv") // supports csv, json, parquet & orc
+//      .option("path", "/home/saurabh/Desktop/Spafka_RW/Spark_DSF_RW/") // count.json
+//      .option("checkpointLocation", "tmp/checkpoint/sparkStream/counts/")
+//      .start()
+//      .awaitTermination()
 
   }
 }
