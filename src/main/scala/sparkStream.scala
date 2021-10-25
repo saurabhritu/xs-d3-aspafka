@@ -1,5 +1,6 @@
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.types.StructType
 
 // *** use netcat's "nc -lk 9090" command in terminal to send data through socket ***
@@ -26,23 +27,27 @@ object sparkStream {
 
     lines.printSchema()
 
-    val words = lines.as[String].flatMap(_.split(" "))
-    val wordCounts = words.groupBy("value").count()
+//    *** General Main Code ***
+//    val words = lines.as[String].flatMap(_.split(" "))
+//    val wordCounts = words.groupBy("value").count()
 
 //    *** this segments will also work fine ***
 //    val words = lines.select(explode(split(lines("value"), " ")).alias("word"))
 //    val wordCounts = words.groupBy("word").count()
 
 //    *** using watermark for writing into file format ***
-//    val wordCounts = words
-//      .withWatermark("timestamp", "10 minutes")
-//      .groupBy(window($"timestamp", "10 minutes", "5 minutes"), $"words")
-//      .count()
+    val words = lines.as[String].flatMap(_.split(" "))
+      .withColumn("timestamp", current_timestamp())
+    val wordCounts = words
+      .withWatermark("timestamp", "2 minutes")
+      .groupBy(window($"timestamp", "2 minutes", "1 minutes"), $"value")
+      .count()
 
 //    *** Writing streaming data to console ***
     val query = wordCounts.writeStream
       .format("console")
       .outputMode("complete")
+      .option("truncate", "false")
       .start()
       .awaitTermination()
 
@@ -60,9 +65,27 @@ object sparkStream {
 //          .awaitTermination()
 
 
-//    *** Writing streaming data into file system using watermarking & windowing [ going on..! ]***
+//    *** Writing Streaming data in files system ***
 //    lines.isStreaming
 //
+//    val DFcounts = lines.selectExpr("CAST(value AS STRING)")
+//    val DFcounts_schema = new StructType()
+//      .add("word", "string")
+//      .add("count", "integer")
+//
+//    val count = DFcounts.selectExpr("to_csv(struct(*)) AS value")
+//      .writeStream
+//      .outputMode("append")
+//      .format("csv") // supports csv, json, parquet & orc
+//      .option("path", "/home/saurabh/Desktop/Spafka_RW/Spark_DSF_RW/text.csv") // count.json
+//      .option("checkpointLocation", "tmp/checkpoint/sparkStream/NonAgg/")
+//      .start()
+//      .awaitTermination()
+
+
+//    *** Writing aggregated streaming data into file system using watermarking & windowing [ going on..! ]***
+
+//    lines.isStreaming
 //    val DFcounts = wordCounts.selectExpr("CAST(value AS STRING)", "CAST(count AS STRING)")
 //    val DFcounts_schema = new StructType()
 //      .add("word", "string")
@@ -72,7 +95,7 @@ object sparkStream {
 //      .writeStream
 //      .outputMode("append")
 //      .format("csv") // supports csv, json, parquet & orc
-//      .option("path", "/home/saurabh/Desktop/Spafka_RW/Spark_DSF_RW/") // count.json
+//      .option("path", "/home/saurabh/Desktop/Spafka_RW/Spark_DSF_RW/count")
 //      .option("checkpointLocation", "tmp/checkpoint/sparkStream/counts/")
 //      .start()
 //      .awaitTermination()
