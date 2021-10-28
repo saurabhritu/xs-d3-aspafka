@@ -38,6 +38,7 @@ object sparkStream {
 //    *** using watermark for writing into file format ***
     val words = lines.as[String].flatMap(_.split(" "))
       .withColumn("timestamp", current_timestamp())
+
     val wordCounts = words
       .withWatermark("timestamp", "2 minutes")
       .groupBy(window($"timestamp", "2 minutes", "1 minutes"), $"value")

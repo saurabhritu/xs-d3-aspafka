@@ -17,17 +17,17 @@ object Spark_DSF {
 
     import spark.implicits._
 
-    // json file structure must structured so that it can be converted into dataframes
+    // json file structure must be structured so that it can be converted into dataframes
     val df = spark.read.json("/home/saurabh/Desktop/Spafka_RW/Spark_DSF_RW/DSF_1.json")
     df.show()
 //    ### Useful code uncomment for running ###
 
 //    *** SQL Operation ***
-//    df.printSchema()
-//    df.select("name").show()
-//    df.select("address").show()
-//    df.filter($"name" === "Saurabh").select("address").show()
-//    df.groupBy("address").count().show()
+    df.printSchema()
+    df.select("name").show()
+    df.select("address").show()
+    df.filter($"name" === "Saurabh").select("address").show()
+    df.groupBy("address").count().show()
 
 //    *** concept of temp view ***
 //    df.createOrReplaceTempView("people")

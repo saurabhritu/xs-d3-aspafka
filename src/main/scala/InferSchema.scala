@@ -1,5 +1,6 @@
 // imports
 import org.apache.spark.sql.SparkSession
+import org.apache.avro.generic.GenericData.StringType
 import org.apache.spark.sql.types.{StructField, StructType}
 import org.apache.spark.Partitioner
 import org.apache.spark.sql.functions.broadcast
@@ -38,13 +39,18 @@ object InferSchema {
 
 //    *** Read data from csv with/without schema ***
 
-//    val csvSchema =  StructType([StructField("id", IntegerType(), False)])
+//    val csvSchema =  new StructType()
+//      .add("id", "Integer")
 
-//    val df_2 = spark.read.option("header", true )
+//    val df_2 = spark.read
+//      .option("header", true )
 //      .csv("/home/saurabh/Desktop/Spafka_RW/CSV_RW/Read/CSV_1.csv")
-//
-//    val df_2 = spark.read.option("header", false ).option("inferSchema", true)
+
+//    val df_2 = spark.read
+//      .option("header", false )
+//      .option("inferSchema", true)
 //      .csv("/home/saurabh/Desktop/Spafka_RW/CSV_RW/Read/CSV_1.csv")
+
 //    df_2.printSchema()
 //    df_2.show()
 
@@ -111,7 +117,7 @@ object InferSchema {
       broadcast(citiesDF),
       peopleDF("city") <=> citiesDF("city")
     ).drop(citiesDF("city"))
-      .explain()
+      .explain(true)
 
   }
 }
