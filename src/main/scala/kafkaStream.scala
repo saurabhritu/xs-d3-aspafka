@@ -29,7 +29,7 @@ def main(args: Array[String]) {
 //  val df = spark.read.format("avro")
 //    .option("userdataSchema", userdataSchema.toString)
 //    .load("/home/saurabh/Desktop/Spafka_RW/avro/userdata1.avro")
-
+//
 //  df.createOrReplaceTempView("userdataDF")
 //  val sqldf = spark.sql("SELECT first_name FROM userdataDF WHERE first_name LIKE 'K%' ")
 //
@@ -88,7 +88,6 @@ def main(args: Array[String]) {
 
 //  personDfk.show()
 //  *** this will work if df is streaming Dataframe/ Dataset  [ Done ]***
-
     val dfk = kdf.selectExpr("CAST(value AS STRING)")
     dfk.selectExpr("to_json(struct(*)) AS value")
       .writeStream

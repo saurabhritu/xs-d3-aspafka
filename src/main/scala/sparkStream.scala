@@ -41,7 +41,7 @@ object sparkStream {
 
     val wordCounts = words
       .withWatermark("timestamp", "2 minutes")
-      .groupBy(window($"timestamp", "2 minutes", "1 minutes"), $"value")
+      .groupBy(window($"timestamp", "2 minutes", "2 minutes"), $"value")
       .count()
 
 //    *** Writing streaming data to console ***
