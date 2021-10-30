@@ -42,7 +42,7 @@ object windowFunction {
       .show()
 
 //    *** Activate this code before running below application ***
-//    val winSpec = Window.partitionBy("depName").orderBy(desc("salary"))
+    val winSpec = Window.partitionBy("depName").orderBy(desc("salary"))
 
     // *** there are some other functions i.e row_number(), percent_rank() & ntile etc. we can use ***
 //    val rank_df = empsalary.withColumn("rank", rank().over(winSpec))
@@ -59,8 +59,8 @@ object windowFunction {
 //    val percent_rank_df = empsalary.withColumn("percent_rank", percent_rank().over(winSpec))
 //    percent_rank_df.show()
 //
-//    val ntile_df = empsalary.withColumn("ntile", ntile(3).over(winSpec))
-//    ntile_df.show()
+    val ntile_df = empsalary.withColumn("ntile", ntile(3).over(winSpec))
+    ntile_df.show()
 
 
 //      *** Window analytical functions ***
@@ -86,11 +86,11 @@ object windowFunction {
 //
 //      range_between_df.show()
 
-    val winSpec = Window.partitionBy("depName")
-      .orderBy("salary").rowsBetween(-1,1) // create window by using one previous & one ahead column
-
-    val rows_between_df = empsalary.withColumn("max_salary", max("salary").over(winSpec))
-    rows_between_df.show()
+//    val winSpec = Window.partitionBy("depName")
+//      .orderBy("salary").rowsBetween(-1,1) // create window by using one previous & one ahead column
+//
+//    val rows_between_df = empsalary.withColumn("max_salary", max("salary").over(winSpec))
+//    rows_between_df.show()
 
   }
 }

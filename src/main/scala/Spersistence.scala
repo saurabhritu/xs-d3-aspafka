@@ -24,7 +24,25 @@ object Spersistence {
     // filtering even numbers
     val rdd2 = rdd1.filter(x => x%2 == 0)
     val rdd3 = rdd1.filter(x=> x%2 != 0 )
-    rdd2.foreach(println)
-    rdd3.foreach(println)
+    rdd2.foreach(print)
+    println()
+    rdd3.foreach(print)
+
+    val rdd4 = rdd1.toDF()
+    val filePath = "/home/saurabh/Desktop/Spafka_RW/Write/Persistence_write/test_csv_1/"
+
+    rdd4.write
+      .format("csv")
+      .option("trucate", false)
+      .mode("overwrite")
+      .save(filePath)
+
+    val filePath_2 = "/home/saurabh/Desktop/Spafka_RW/Write/Persistence_write/test_json_2/"
+
+    rdd4.write
+      .format("json")
+      .option("trucate", false)
+      .mode("overwrite")
+      .save(filePath_2)
   }
 }

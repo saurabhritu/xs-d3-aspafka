@@ -3,3 +3,122 @@ Warning---!
 
 #####
 :>
+
+*========================*
+   ### Apache Basics ### |
+*========================*
+
+to create .jar file package : sbt package
+
+-> there may be compiler-bridge_2.12 compiling issue with scala version so do suffle with version and check
+
+-----------------------
+G_search incident :- error: Missing application resource.
+
+--------------------------------------------
+test sbt: sbt test
+
+--------------------------------
+** explanation of spark-submit:
+
+spark-submit --class package.class_name source_jar_file input_source output_destination
+
+i.e.: spark-submit --class RDD_Demo target/scala-2.12/sparkdemo_2.12-1.0.jar /home/saurabh/Desktop/Spafka_RW/Read/SR_To_Do-list /home/saurabh/Desktop/Spafka_RW/Write/SR_To_Do-list_1
+
+----
+or in simple
+----
+spark-submit --class RDD_Demo target/scala-2.12/sparkdemo_2.12-0.1.jar
+-------------------------------------
+
+** RDD_programing :--> https://spark.apache.org/docs/latest/rdd-programming-guide.html
+
+RDD Operations: https://data-flair.training/blogs/spark-rdd-operations-transformations-actions/
+
+Spark-inshights: https://blog.insightdatascience.com/getting-started-with-spark-and-batch-processing-frameworks-d9f80c146e13
+
+-------------------------------------------------------
+
+** Structured  Stremaing :-
+https://docs.databricks.com/spark/latest/structured-streaming/demo-notebooks.html#structured-streaming-demo-scala-notebook
+
+-------------------------------------------------------
+Advance Concepts: Broadcast maps:-
+https://mungingdata.com/apache-spark/broadcasting-maps-in-spark/
+
+----------------------------------------------------------
+
+*=======================*
+  ### kafka Basics ###  |
+*=======================*
+---------------------------------------
+go in bin of kafka amd run :		|
+step1: start zookeeper & kafka	|
+step2: then create topic :( cmd-> 	|
+step3: produce msg with producer	|
+step4: consume msg from cosumer	|
+					|
+it's done!				|
+---------------------------------------
+Lets experimets this:- ***
+-----------------------------
+Strat Zookeeper: --> bin/zookeeper-server-start.sh config/zookeeper.properties
+----------------------------
+-----------------------------
+Strat kafka: --> bin/kafka-server-start.sh config/server.properties
+----------------------------
+Create kafka topics:-->
+
+bin/kafka-topics.sh --create --replication-factor 1 --topic test --partitions 1 --bootstrap-server localhost:9092
+
+Delete/describe topics:-->
+bin/kafka-topics.sh --bootstrap-server localhost:9092 --delete/describe --topic test
+-----------------------------------------------
+List kafka topics:-->
+
+bin/kafka-topics.sh --bootstrap-server localhost:9092 --list
+-----------------------------------------------
+-----------------------------------------------
+produce kafka msg into topic:-->
+
+bin/kafka-console-producer.sh --topic test --bootstrap-server localhost:9092
+-----------------------------------------------
+-----------------------------------------------
+consume kafka msg from topic:-->
+
+bin/kafka-console-consumer.sh --topic test --from-beginning --bootstrap-server localhost:9092
+-----------------------------------------------
+### kafka-connect-standalone ### :->
+
+source only cmd:->
+bin/connect-standalone.sh config/connect-standalone.properties config/connect-file-source.properties
+
+sink only cmd:->
+bin/connect-standalone.sh config/connect-standalone.properties config/connect-file-sink.properties
+
+source-sink Live:- bin/connect-standalone.sh config/connect-standalone.properties config/connect-file-source.properties config/connect-file-sink.properties
+
+***---------------***
+Imp Link:-> https://talks.rmoff.net/QZ5nsS/from-zero-to-hero-with-kafka-connect#skfvSFp
+
+link_2:--> https://docs.databricks.com/spark/latest/structured-streaming/avro-dataframe.html
+---------------
+
+*** Be Carefull ***
+[--- Interesting & considerable ---] facts :- Whenever we read from source file and write some where else into sink file using source-sink Live Command and then delete that sink file and next time again we run that file then it will only write updated text from source file.(I think this is because of setting the offset last to the text fiel during first time run )
+
+----------------
+task_1 [Done]:- R/W throug avro file and converted it to json with/without schema and in spark df/ds, perfrom sql operation and stream it to kafka topic.
+-------->
+task_2 [Done]:- read data from one topics and write to another topic or any file system.
+----------------
+
+imp_link:-> https://medium.com/expedia-group-tech/apache-spark-structured-streaming-input-sources-2-of-6-6a72f798838c
+
+imp_link:-> https://www.oreilly.com/library/view/learning-spark-2nd/9781492050032/ch04.html
+
+imp Link:-> https://dzone.com/articles/reading-spark-dags
+
+imp Link:-> https://techvidvan.com/tutorials/spark-streaming-window-operations/#
+
+----------------
